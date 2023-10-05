@@ -1,8 +1,8 @@
-# (TODO: your game's title)
+# Drive on Ice Simulator
 
-Author: (TODO: your name)
+Author: Yuan Meng
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: Don't have much time to make this game because of mid-term. The idea is just to test how to put mix the normal way of moving and walkmesh. When you are at the edge of the walkmesh you just exit walkmesh mode. It's very hard to figure out how to steer a car so that part is basically shit. Also it's hard to get the friction force right so this is a driving on ice simulator. Also the model sometimes will go through the walkmesh, when on slopes, making it smoother can fix this(or make the car smaller)
 
 Screen Shot:
 
@@ -10,9 +10,9 @@ Screen Shot:
 
 How To Play:
 
-(TODO: describe the controls and (if needed) goals/strategy.)
+WS is accelerate and brake. AD to turn. Want to get to the final destination.
 
-Sources: (TODO: list a source URL for any assets you did not create yourself. Make sure you have a license for the asset.)
+Sources: The simple car model is from a free online website. But I downloaded it last semester and I could not find the original URL.
 
 This game was built with [NEST](NEST.md).
 

@@ -281,11 +281,7 @@ bool WalkMesh::cross_edge(WalkPoint const &start, WalkPoint *end_, glm::quat *ro
 	};
 	
 	auto normal_orig = get_normal(start);
-	
-	printf("orig:%.3f,%.3f,%.3f\n",normal_orig[0],normal_orig[1],normal_orig[2]);
 	auto normal_dest = get_normal(end);
-	
-	printf("dest:%.3f,%.3f,%.3f\n",normal_dest[0],normal_dest[1],normal_dest[2]);
 	
 	rotation = glm::rotation(normal_orig,normal_dest);
 
