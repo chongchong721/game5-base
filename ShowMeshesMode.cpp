@@ -19,8 +19,8 @@ ShowMeshesMode::ShowMeshesMode(MeshBuffer const &buffer_) : buffer(buffer_) {
 	}
 	{ //create a drawable to hold the current mesh:
 		scene.transforms.emplace_back();
-		scene.drawables.emplace_back(&scene.transforms.back());
-		scene_drawable = &scene.drawables.back();
+		scene.drawables.emplace_back(new Scene::Drawable(&scene.transforms.back()));
+		scene_drawable = scene.drawables.back();
 
 		scene_drawable->pipeline = show_meshes_program_pipeline;
 		scene_drawable->pipeline.vao = vao;

@@ -55,7 +55,7 @@ if (maek.OS === "windows") {
 	);
 } else if (maek.OS === "linux") {
 	maek.options.CPPFlags.push(
-		`-O2`, //optimize
+		//`-O2`, //optimize
 		//include paths for nest libraries:
 		`-I${NEST_LIBS}/SDL2/include/SDL2`, `-D_THREAD_SAFE`, //the output of sdl-config --cflags
 		`-I${NEST_LIBS}/glm/include`,
@@ -133,6 +133,7 @@ const game_names = [
 	maek.CPP('PlayMode.cpp'),
 	maek.CPP('main.cpp'),
 	maek.CPP('LitColorTextureProgram.cpp'),
+	maek.CPP('frameProgram.cpp'),
 	//maek.CPP('ColorTextureProgram.cpp'),  //not used right now, but you might want it
 	maek.CPP('Sound.cpp'),
 	maek.CPP('load_wav.cpp'),

@@ -43,5 +43,5 @@ struct ShowMeshesMode : Mode {
 	//mode uses a small Scene to arrange things for viewing:
 	Scene scene;
 	Scene::Camera *scene_camera = nullptr;
-	Scene::Drawable *scene_drawable = nullptr;
+	std::shared_ptr<Scene::Drawable> scene_drawable = nullptr;
 };

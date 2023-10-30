@@ -1,19 +1,18 @@
-#include "LitColorTextureProgram.hpp"
+#include "frameProgram.hpp"
 
 #include "gl_compile_program.hpp"
 #include "gl_errors.hpp"
+Scene::Drawable::Pipeline frame_program_pipeline;
 
-Scene::Drawable::Pipeline lit_color_texture_program_pipeline;
-
-Load< LitColorTextureProgram > lit_color_texture_program(LoadTagEarly, []() -> LitColorTextureProgram const * {
-	LitColorTextureProgram *ret = new LitColorTextureProgram();
+Load< FrameProgram > frame_program(LoadTagEarly, []() -> FrameProgram const * {
+	FrameProgram *ret = new FrameProgram();
 
 	//----- build the pipeline template -----
-	lit_color_texture_program_pipeline.program = ret->program;
+	frame_program_pipeline.program = ret->program;
 
-	lit_color_texture_program_pipeline.OBJECT_TO_CLIP_mat4 = ret->OBJECT_TO_CLIP_mat4;
-	lit_color_texture_program_pipeline.OBJECT_TO_LIGHT_mat4x3 = ret->OBJECT_TO_LIGHT_mat4x3;
-	lit_color_texture_program_pipeline.NORMAL_TO_LIGHT_mat3 = ret->NORMAL_TO_LIGHT_mat3;
+	frame_program_pipeline.OBJECT_TO_CLIP_mat4 = ret->OBJECT_TO_CLIP_mat4;
+	frame_program_pipeline.OBJECT_TO_LIGHT_mat4x3 = ret->OBJECT_TO_LIGHT_mat4x3;
+	frame_program_pipeline.NORMAL_TO_LIGHT_mat3 = ret->NORMAL_TO_LIGHT_mat3;
 
 	/* This will be used later if/when we build a light loop into the Scene:
 	lit_color_texture_program_pipeline.LIGHT_TYPE_int = ret->LIGHT_TYPE_int;
@@ -37,13 +36,13 @@ Load< LitColorTextureProgram > lit_color_texture_program(LoadTagEarly, []() -> L
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
-	lit_color_texture_program_pipeline.textures[0].texture = tex;
-	lit_color_texture_program_pipeline.textures[0].target = GL_TEXTURE_2D;
+	frame_program_pipeline.textures[0].texture = tex;
+	frame_program_pipeline.textures[0].target = GL_TEXTURE_2D;
 
 	return ret;
 });
 
-LitColorTextureProgram::LitColorTextureProgram() {
+FrameProgram::FrameProgram() {
 	//Compile vertex and fragment shaders using the convenient 'gl_compile_program' helper function:
 	program = gl_compile_program(
 		//vertex shader:
@@ -137,7 +136,7 @@ LitColorTextureProgram::LitColorTextureProgram() {
 	glUseProgram(0); //unbind program -- glUniform* calls refer to ??? now
 }
 
-LitColorTextureProgram::~LitColorTextureProgram() {
+FrameProgram::~FrameProgram() {
 	glDeleteProgram(program);
 	program = 0;
 }

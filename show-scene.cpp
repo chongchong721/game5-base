@@ -111,15 +111,15 @@ int main(int argc, char **argv) {
 				if (!buffer_vao) return;
 				Mesh const &mesh = buffer->lookup(mesh_name);
 
-				scene.drawables.emplace_back(transform);
-				Scene::Drawable &drawable = scene.drawables.back();
+				scene.drawables.emplace_back(new Scene::Drawable(transform));
+				std::shared_ptr<Scene::Drawable>  drawable = scene.drawables.back();
 
-				drawable.pipeline = show_scene_program_pipeline;
+				drawable->pipeline = show_scene_program_pipeline;
 
-				drawable.pipeline.vao = buffer_vao;
-				drawable.pipeline.type = mesh.type;
-				drawable.pipeline.start = mesh.start;
-				drawable.pipeline.count = mesh.count;
+				drawable->pipeline.vao = buffer_vao;
+				drawable->pipeline.type = mesh.type;
+				drawable->pipeline.start = mesh.start;
+				drawable->pipeline.count = mesh.count;
 
 			});
 		} catch (std::exception &e) {

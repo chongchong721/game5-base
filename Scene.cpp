@@ -80,6 +80,13 @@ glm::mat4 Scene::Camera::make_projection() const {
 //-------------------------
 
 
+void Scene::draw(Camera const &camera, bool draw_frame) const {
+	assert(camera.transform);
+	glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
+	glm::mat4x3 world_to_light = glm::mat4x3(1.0f);
+	draw(world_to_clip, world_to_light,draw_frame);
+}
+
 void Scene::draw(Camera const &camera) const {
 	assert(camera.transform);
 	glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
@@ -87,12 +94,15 @@ void Scene::draw(Camera const &camera) const {
 	draw(world_to_clip, world_to_light);
 }
 
-void Scene::draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_light) const {
+void Scene::draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_light, bool draw_frame) const {
 
 	//Iterate through all drawables, sending each one to OpenGL:
 	for (auto const &drawable : drawables) {
+		if (drawable->draw_frame != draw_frame){
+			continue;
+		}
 		//Reference to drawable's pipeline for convenience:
-		Scene::Drawable::Pipeline const &pipeline = drawable.pipeline;
+		Scene::Drawable::Pipeline const &pipeline = drawable->pipeline;
 
 		//skip any drawables without a shader program set:
 		if (pipeline.program == 0) continue;
@@ -111,8 +121,8 @@ void Scene::draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_lig
 		//Configure program uniforms:
 
 		//the object-to-world matrix is used in all three of these uniforms:
-		assert(drawable.transform); //drawables *must* have a transform
-		glm::mat4x3 object_to_world = drawable.transform->make_local_to_world();
+		assert(drawable->transform); //drawables *must* have a transform
+		glm::mat4x3 object_to_world = drawable->transform->make_local_to_world();
 
 		//OBJECT_TO_CLIP takes vertices from object space to clip space:
 		if (pipeline.OBJECT_TO_CLIP_mat4 != -1U) {
@@ -360,7 +370,7 @@ void Scene::set(Scene const &other, std::unordered_map< Transform const *, Trans
 	//copy other's drawables, updating transform pointers:
 	drawables = other.drawables;
 	for (auto &d : drawables) {
-		d.transform = transform_to_transform.at(d.transform);
+		d->transform = transform_to_transform.at(d->transform);
 	}
 
 	//copy other's cameras, updating transform pointers:

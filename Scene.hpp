@@ -50,6 +50,8 @@ struct Scene {
 	};
 
 	struct Drawable {
+		bool draw_frame = false;
+
 		//a 'Drawable' attaches attribute data to a transform:
 		Drawable(Transform *transform_) : transform(transform_) { assert(transform); }
 		Transform * transform;
@@ -118,15 +120,19 @@ struct Scene {
 
 	//Scenes, of course, may have many of the above objects:
 	std::list< Transform > transforms;
-	std::list< Drawable > drawables;
+	std::list< std::shared_ptr<Drawable> > drawables;
 	std::list< Camera > cameras;
 	std::list< Light > lights;
 
+	std::unordered_map<std::string, Drawable> drawble_name_map;
+
 	//The "draw" function provides a convenient way to pass all the things in a scene to OpenGL:
+	void draw(Camera const &camera, bool draw_frame) const;
 	void draw(Camera const &camera) const;
 
 	//..sometimes, you want to draw with a custom projection matrix and/or light space:
-	void draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_light = glm::mat4x3(1.0f)) const;
+	void draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_light = glm::mat4x3(1.0f), bool draw_frame = false) const;
+	//void draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_light = glm::mat4x3(1.0f)) const;
 
 	//add transforms/objects/cameras from a scene file to this scene:
 	// the 'on_drawable' callback gives your code a chance to look up mesh data and make Drawables:

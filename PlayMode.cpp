@@ -1,6 +1,7 @@
 #include "PlayMode.hpp"
 
 #include "LitColorTextureProgram.hpp"
+#include "frameProgram.hpp"
 
 #include "DrawLines.hpp"
 #include "Mesh.hpp"
@@ -24,15 +25,15 @@ Load< Scene > mesh_scene(LoadTagDefault, []() -> Scene const * {
 	return new Scene(data_path("mesh.scene"), [&](Scene &scene, Scene::Transform *transform, std::string const &mesh_name){
 		Mesh const &mesh = meshes->lookup(mesh_name);
 
-		scene.drawables.emplace_back(transform);
-		Scene::Drawable &drawable = scene.drawables.back();
+		scene.drawables.emplace_back(new Scene::Drawable(transform));
+		std::shared_ptr<Scene::Drawable> drawable = scene.drawables.back();
 
-		drawable.pipeline = lit_color_texture_program_pipeline;
+		drawable->pipeline = lit_color_texture_program_pipeline;
 
-		drawable.pipeline.vao = meshes_for_lit_color_texture_program;
-		drawable.pipeline.type = mesh.type;
-		drawable.pipeline.start = mesh.start;
-		drawable.pipeline.count = mesh.count;
+		drawable->pipeline.vao = meshes_for_lit_color_texture_program;
+		drawable->pipeline.type = mesh.type;
+		drawable->pipeline.start = mesh.start;
+		drawable->pipeline.count = mesh.count;
 
 	});
 });
@@ -52,6 +53,23 @@ PlayMode::PlayMode() : scene(*mesh_scene) {
 			player.transform = &t;
 			player.original_transform = new Scene::Transform();
 			*player.original_transform = t;
+		}
+	}
+
+
+	for(auto &d : scene.drawables){
+		if(d->transform->name == "car"){
+			d->draw_frame = true;
+			// auto pipeline = d->pipeline;
+			// d->pipeline = frame_program_pipeline;
+			// d->pipeline.vao = pipeline.vao;
+			// d->pipeline.count = pipeline.count;
+			// d->pipeline.type = pipeline.type;
+			// d->pipeline.start = pipeline.start;
+			// d->pipeline.count = pipeline.count;
+			// for (auto i  = 0U ; i < pipeline.TextureCount; i++){
+			// 	d->pipeline.textures[i] = pipeline.textures[i];
+			// }
 		}
 	}
 
@@ -369,7 +387,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
 
-	scene.draw(*player.camera);
+
+	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	scene.draw(*player.camera, false);
+	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+	scene.draw(*player.camera, true);
+	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
 	/* In case you are wondering if your walkmesh is lining up with your scene, try:
 	{
